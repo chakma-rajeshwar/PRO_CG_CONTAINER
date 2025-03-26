@@ -1,35 +1,37 @@
-# Node.js setup
-FROM node:18-alpine AS node
-
+# First stage: Node.js setup
+FROM node:18-alpine AS node_builder
 WORKDIR /app
-COPY package.json ./
+COPY package.json .
 RUN npm install
 COPY . .
+RUN npm run build
 
-EXPOSE 3000
-
-# Flask setup
-FROM python:3.11-alpine AS flask
-
+# Second stage: Flask setup
+FROM python:3.11-alpine AS flask_builder
 WORKDIR /app
-COPY requirements.txt ./
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
-EXPOSE 5000
-
-# Final stage
-FROM alpine:3.18
-
-# Install Node.js and Python
-RUN apk add --no-cache nodejs python3 py3-pip
-
-# Copy from Node stage
-COPY --from=node /app /app/node
-# Copy from Flask stage
-COPY --from=flask /app /app/flask
-
+# Final stage: Combined runtime
+FROM python:3.11-alpine
 WORKDIR /app
 
-# Combined run command
-CMD ["sh", "-c", "cd node && node app.js & cd ../flask && python app.py"]
+# Install Node.js
+RUN apk add --no-cache nodejs npm
+
+# Copy Node.js app
+COPY --from=node_builder /app /app/node
+# Copy Flask app
+COPY --from=flask_builder /app /app/flask
+COPY --from=flask_builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+
+# Install PM2 process manager
+RUN npm install -g pm2
+
+WORKDIR /app
+COPY ecosystem.config.js .
+
+EXPOSE 3000 5000
+
+CMD ["pm2-runtime", "ecosystem.config.js"]
