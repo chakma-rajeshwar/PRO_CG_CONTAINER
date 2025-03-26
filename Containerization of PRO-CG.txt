@@ -1,0 +1,70 @@
+Containerization of PRO-CG
+(1) Postgres
+    - version 16.4
+(2) Valkey
+(3) Node.js/Express.js and Flask
+    - Node.js version latest
+    - Python version 3.11
+    - Pip version 24.1
+(4) React App
+(5) NGNIX Reverse-Proxy
+
+
+/PRO_CG
+ /postgres
+  ├── Dockerfile
+ /valkey
+  ├── Dockerfile
+ /backend
+  ├── Dockerfile
+  ├── package.json  (for Node.js)
+  ├── app.js        (for Node.js API)
+  ├── requirements.txt  (for Flask)
+  ├── app.py        (for Flask API)
+ /frontend
+  ├── Dockerfile
+  ├── package.json
+  ├── src/
+  ├── public/
+ /pro_cg_web (nginx)
+  ├── Dockerfile
+docker-compose.yml
+
+Commands:
+sudo apt update
+sudo apt install docker.io -y
+sudo apt install docker-compose -y
+sudo usermod -aG docker $USER
+newgrp docker
+docker-compose --version
+docker-compose up -d --build
+
+for WSL:
+sudo apt update
+sudo apt install ca-certificates curl gnupg -y
+
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo tee /etc/apt/keyrings/docker.asc > /dev/null
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+
+ip addr show
+sudo ip link set docker0 up
+sudo systemctl enable docker
+sudo systemctl start docker
+docker --version
+docker compose version
+
+If you don’t want to use sudo every time:
+sudo usermod -aG docker $USER
+newgrp docker
+
+docker compose up -d --build
+
+
