@@ -1,0 +1,8 @@
+FROM postgres:16.4
+
+ENV POSTGRES_DB=procgdb
+ENV POSTGRES_USER=procguser
+ENV POSTGRES_PASSWORD=procgpassword
+
+EXPOSE 5432
+
