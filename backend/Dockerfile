@@ -1,25 +1,35 @@
-# Stage 1: Build Node.js app
-FROM node:latest AS node-builder
+# Node.js setup
+FROM node:18-alpine AS node
 
 WORKDIR /app
-
 COPY package.json ./
 RUN npm install
-
 COPY . .
 
-# Stage 2: Setup Python (Flask)
-FROM python:3.11
+EXPOSE 3000
+
+# Flask setup
+FROM python:3.11-alpine AS flask
+
+WORKDIR /app
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+
+EXPOSE 5000
+
+# Final stage
+FROM alpine:3.18
+
+# Install Node.js and Python
+RUN apk add --no-cache nodejs python3 py3-pip
+
+# Copy from Node stage
+COPY --from=node /app /app/node
+# Copy from Flask stage
+COPY --from=flask /app /app/flask
 
 WORKDIR /app
 
-COPY --from=node-builder /app /app
-
-RUN pip install --upgrade pip==24.1
-RUN pip install -r requirements.txt
-
-EXPOSE 3001  # Node.js API
-EXPOSE 5000  # Flask API
-
-CMD ["sh", "-c", "node app.js & python app.py"]
-
+# Combined run command
+CMD ["sh", "-c", "cd node && node app.js & cd ../flask && python app.py"]
