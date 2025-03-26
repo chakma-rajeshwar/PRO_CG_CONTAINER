@@ -9,26 +9,28 @@ Containerization of PRO-CG
 (4) React App
 (5) NGNIX Reverse-Proxy
 
-
-/PRO_CG
- /postgres
-  ├── Dockerfile
- /valkey
-  ├── Dockerfile
- /backend
-  ├── Dockerfile
-  ├── package.json  (for Node.js)
-  ├── app.js        (for Node.js API)
-  ├── requirements.txt  (for Flask)
-  ├── app.py        (for Flask API)
- /frontend
-  ├── Dockerfile
-  ├── package.json
-  ├── src/
-  ├── public/
- /pro_cg_web (nginx)
-  ├── Dockerfile
-docker-compose.yml
+/PRO_CG_CONTAINER/
+├── docker-compose.yml
+├── postgres/
+│   └── Dockerfile
+├── valkey/
+│   └── Dockerfile
+├── backend/
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── app.js
+│   ├── requirements.txt
+│   ├── app.py
+│   └── ecosystem.config.js
+├── frontend/
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   ├── package.json
+│   ├── src/
+│   └── public/
+└── pro_cg_web/
+    ├── Dockerfile
+    └── nginx.conf
 
 Commands:
 sudo apt update
