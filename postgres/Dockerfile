@@ -1,8 +1,9 @@
-FROM postgres:16.4
+FROM postgres:16.4-alpine
 
 ENV POSTGRES_DB=procgdb
 ENV POSTGRES_USER=procguser
 ENV POSTGRES_PASSWORD=procgpassword
 
-EXPOSE 5432
+VOLUME /var/lib/postgresql/data
 
+EXPOSE 5432
