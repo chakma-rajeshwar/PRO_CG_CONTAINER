@@ -43,8 +43,8 @@ services:
     environment:
       DATABASE_URL: postgres://procguser:procgpassword@postgres:5432/procgdb
       REDIS_URL: redis://valkey:6379
-      NODE_ENV: development
-      FLASK_ENV: development
+      NODE_ENV: production
+      FLASK_ENV: production
     ports:
       - "3000:3000"  # Node.js
       - "5000:5000"  # Flask
@@ -63,14 +63,14 @@ services:
     restart: always
     depends_on:
       - backend
+    environment:
+      NODE_ENV: production
     ports:
-      - "8000:8000"
+      - "8000:80"
     volumes:
       - ./frontend/src:/app/src
       - ./frontend/public:/app/public
-    environment:
-      NODE_ENV: development
-      REACT_APP_API_URL: http://localhost:3000
+      - /app/node_modules
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 30s

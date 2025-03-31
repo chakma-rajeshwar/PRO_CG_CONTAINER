@@ -6,9 +6,12 @@ function App() {
   const [message, setMessage] = useState('Loading...');
 
   useEffect(() => {
-    axios.get('http://backend:3000')
+    axios.get('/api')
       .then(response => setMessage(response.data))
-      .catch(error => setMessage('Error connecting to backend'));
+      .catch(error => {
+        console.error('API Error:', error);
+        setMessage('Error connecting to backend');
+      });
   }, []);
 
   return (

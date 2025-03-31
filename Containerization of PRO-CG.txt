@@ -65,6 +65,7 @@ If you don’t want to use sudo every time:
 sudo usermod -aG docker $USER
 newgrp docker
 
-docker compose up -d --build
 
+docker compose up -d --build
+docker compose down -v
 
